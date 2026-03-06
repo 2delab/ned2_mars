@@ -34,6 +34,7 @@ setup(
             "arucodetection=niryo_ned_vision.arucodetection:main",
             "d435_arucodetection=niryo_ned_vision.d435_arucodetection:main",
             "stereo_calibration=niryo_ned_vision.stereo_distance_calibrator:main",
+            "dual_camera_calibration=niryo_ned_vision.dual_camera_calibration:main",
         ],
     },
 )

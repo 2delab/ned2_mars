@@ -26,6 +26,26 @@ def generate_launch_description():
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments=[
+            "0.010573",
+            "0.011054",
+            "-0.070225",
+            "0.164512",
+            "-3.14",
+            "1.7453",
+            "arm_1_wrist_link",
+            "d435_camera"
+        ],
+        name="d435_camera_tf_broadcaster",
+        output="both",
+    )
+
+
+    '''
+        # Static transform publisher for D435 camera
+    d435_camera_tf_broadcaster = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments=[
             "0.0385",
             "0",
             "0",
@@ -38,6 +58,9 @@ def generate_launch_description():
         name="d435_camera_tf_broadcaster",
         output="both",
     )
+
+    '''
+
 
     # Static transform publisher for mono camera
     mono_camera_tf_broadcaster = Node(
