@@ -1,0 +1,7 @@
+rosbridge_port: 9090
+robot_namespaces:
+  - "arm_1"
+  - "arm_2"
+robot_ips:
+  - "192.168.8.148"
+  - "192.168.8.150"

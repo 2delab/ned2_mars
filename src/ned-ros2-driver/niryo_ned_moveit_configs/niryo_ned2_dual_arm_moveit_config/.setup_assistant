@@ -1,0 +1,23 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: niryo_ned_description
+    relative_path: urdf/ned2/niryo_ned2_dual.urdf.xacro
+  srdf:
+    relative_path: config/niryo_ned2_dual.srdf
+  package_settings:
+    author_name: Abdiwak Debella
+    author_email: todo@mdx.com
+    generated_timestamp: 1772102975
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position

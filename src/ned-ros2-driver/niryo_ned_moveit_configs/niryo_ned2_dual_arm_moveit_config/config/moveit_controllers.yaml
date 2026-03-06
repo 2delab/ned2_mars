@@ -1,0 +1,49 @@
+# MoveIt uses this configuration for controller management
+# Controllers route trajectories through joint_state_prefixer proxy servers
+# which translate prefixed joint names to unprefixed names for hardware
+#
+# Communication flow:
+#   MoveIt (prefixed names)
+#     ↓
+#   /arm_X/follow_joint_trajectory_prefixed (proxy server)
+#     ↓ (names stripped)
+#   /arm_X/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory (hardware)
+
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+
+moveit_simple_controller_manager:
+  controller_names:
+    - arm_1
+    - arm_2
+
+  # Arm 1 controller routes through proxy that handles joint name translation
+  # Proxy server at: /arm_1/follow_joint_trajectory_prefixed
+  # Accepts: [arm_1_joint_1, arm_1_joint_2, ...]
+  # Forwards to hardware with: [joint_1, joint_2, ...]
+  arm_1:
+    type: FollowJointTrajectory
+    joints:
+      - arm_1_joint_1
+      - arm_1_joint_2
+      - arm_1_joint_3
+      - arm_1_joint_4
+      - arm_1_joint_5
+      - arm_1_joint_6
+    action_ns: follow_joint_trajectory_prefixed
+    default: true
+
+  # Arm 2 controller routes through proxy that handles joint name translation
+  # Proxy server at: /arm_2/follow_joint_trajectory_prefixed
+  # Accepts: [arm_2_joint_1, arm_2_joint_2, ...]
+  # Forwards to hardware with: [joint_1, joint_2, ...]
+  arm_2:
+    type: FollowJointTrajectory
+    joints:
+      - arm_2_joint_1
+      - arm_2_joint_2
+      - arm_2_joint_3
+      - arm_2_joint_4
+      - arm_2_joint_5
+      - arm_2_joint_6
+    action_ns: follow_joint_trajectory_prefixed
+    default: true

@@ -1,0 +1,5 @@
+pyyaml
+roslibpy<2.0.0
+pyrealsense2
+numpy<2.0.0
+opencv-contrib-python

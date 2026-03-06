@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="niryo_ned2_dual">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="arm_1">
+        <joint name="arm_1_joint_world"/>
+        <joint name="arm_1_joint_1"/>
+        <joint name="arm_1_joint_2"/>
+        <joint name="arm_1_joint_3"/>
+        <joint name="arm_1_joint_4"/>
+        <joint name="arm_1_joint_5"/>
+        <joint name="arm_1_joint_6"/>
+    </group>
+    <group name="arm_2">
+        <joint name="arm_2_joint_world"/>
+        <joint name="arm_2_joint_1"/>
+        <joint name="arm_2_joint_2"/>
+        <joint name="arm_2_joint_3"/>
+        <joint name="arm_2_joint_4"/>
+        <joint name="arm_2_joint_5"/>
+        <joint name="arm_2_joint_6"/>
+    </group>
+    <group name="dual">
+        <group name="arm_1"/>
+        <group name="arm_2"/>
+    </group>
+    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
+    <group_state name="test_pose" group="arm_1">
+        <joint name="arm_1_joint_1" value="-1.2099"/>
+        <joint name="arm_1_joint_2" value="0"/>
+        <joint name="arm_1_joint_3" value="0"/>
+        <joint name="arm_1_joint_4" value="0"/>
+        <joint name="arm_1_joint_5" value="0"/>
+        <joint name="arm_1_joint_6" value="0"/>
+    </group_state>
+    <group_state name="home" group="arm_1">
+        <joint name="arm_1_joint_1" value="0"/>
+        <joint name="arm_1_joint_2" value="0.2862"/>
+        <joint name="arm_1_joint_3" value="0"/>
+        <joint name="arm_1_joint_4" value="0"/>
+        <joint name="arm_1_joint_5" value="-1.5166"/>
+        <joint name="arm_1_joint_6" value="0"/>
+    </group_state>
+    <group_state name="test_pose" group="arm_2">
+        <joint name="arm_2_joint_1" value="-1.475"/>
+        <joint name="arm_2_joint_2" value="0"/>
+        <joint name="arm_2_joint_3" value="0"/>
+        <joint name="arm_2_joint_4" value="0"/>
+        <joint name="arm_2_joint_5" value="-0.3914"/>
+        <joint name="arm_2_joint_6" value="0"/>
+    </group_state>
+    <group_state name="test+pose" group="dual">
+        <joint name="arm_1_joint_1" value="-1.2099"/>
+        <joint name="arm_1_joint_2" value="0"/>
+        <joint name="arm_1_joint_3" value="0"/>
+        <joint name="arm_1_joint_4" value="0"/>
+        <joint name="arm_1_joint_5" value="0"/>
+        <joint name="arm_1_joint_6" value="0"/>
+        <joint name="arm_2_joint_1" value="-1.243"/>
+        <joint name="arm_2_joint_2" value="0"/>
+        <joint name="arm_2_joint_3" value="0"/>
+        <joint name="arm_2_joint_4" value="0"/>
+        <joint name="arm_2_joint_5" value="0"/>
+        <joint name="arm_2_joint_6" value="0"/>
+    </group_state>
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="arm_1_arm_link" link2="arm_1_base_link" reason="Never"/>
+    <disable_collisions link1="arm_1_arm_link" link2="arm_1_elbow_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_1_arm_link" link2="arm_1_hand_link" reason="Never"/>
+    <disable_collisions link1="arm_1_arm_link" link2="arm_1_shoulder_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_1_arm_link" link2="arm_2_arm_link" reason="Never"/>
+    <disable_collisions link1="arm_1_arm_link" link2="arm_2_base_link" reason="Never"/>
+    <disable_collisions link1="arm_1_arm_link" link2="arm_2_elbow_link" reason="Never"/>
+    <disable_collisions link1="arm_1_arm_link" link2="arm_2_shoulder_link" reason="Never"/>
+    <disable_collisions link1="arm_1_base_link" link2="arm_1_elbow_link" reason="Never"/>
+    <disable_collisions link1="arm_1_base_link" link2="arm_1_shoulder_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_1_base_link" link2="arm_2_arm_link" reason="Never"/>
+    <disable_collisions link1="arm_1_base_link" link2="arm_2_base_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_1_base_link" link2="arm_2_elbow_link" reason="Never"/>
+    <disable_collisions link1="arm_1_base_link" link2="arm_2_forearm_link" reason="Never"/>
+    <disable_collisions link1="arm_1_base_link" link2="arm_2_hand_link" reason="Never"/>
+    <disable_collisions link1="arm_1_base_link" link2="arm_2_shoulder_link" reason="Never"/>
+    <disable_collisions link1="arm_1_base_link" link2="arm_2_wrist_link" reason="Never"/>
+    <disable_collisions link1="arm_1_elbow_link" link2="arm_1_forearm_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_1_elbow_link" link2="arm_1_hand_link" reason="Never"/>
+    <disable_collisions link1="arm_1_elbow_link" link2="arm_1_shoulder_link" reason="Never"/>
+    <disable_collisions link1="arm_1_elbow_link" link2="arm_1_wrist_link" reason="Never"/>
+    <disable_collisions link1="arm_1_elbow_link" link2="arm_2_arm_link" reason="Never"/>
+    <disable_collisions link1="arm_1_elbow_link" link2="arm_2_base_link" reason="Never"/>
+    <disable_collisions link1="arm_1_elbow_link" link2="arm_2_elbow_link" reason="Never"/>
+    <disable_collisions link1="arm_1_elbow_link" link2="arm_2_shoulder_link" reason="Never"/>
+    <disable_collisions link1="arm_1_forearm_link" link2="arm_1_hand_link" reason="Never"/>
+    <disable_collisions link1="arm_1_forearm_link" link2="arm_1_wrist_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_1_forearm_link" link2="arm_2_base_link" reason="Never"/>
+    <disable_collisions link1="arm_1_forearm_link" link2="arm_2_shoulder_link" reason="Never"/>
+    <disable_collisions link1="arm_1_hand_link" link2="arm_1_wrist_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_1_hand_link" link2="arm_2_base_link" reason="Never"/>
+    <disable_collisions link1="arm_1_hand_link" link2="arm_2_shoulder_link" reason="Never"/>
+    <disable_collisions link1="arm_1_shoulder_link" link2="arm_2_arm_link" reason="Never"/>
+    <disable_collisions link1="arm_1_shoulder_link" link2="arm_2_base_link" reason="Never"/>
+    <disable_collisions link1="arm_1_shoulder_link" link2="arm_2_elbow_link" reason="Never"/>
+    <disable_collisions link1="arm_1_shoulder_link" link2="arm_2_forearm_link" reason="Never"/>
+    <disable_collisions link1="arm_1_shoulder_link" link2="arm_2_hand_link" reason="Never"/>
+    <disable_collisions link1="arm_1_shoulder_link" link2="arm_2_shoulder_link" reason="Never"/>
+    <disable_collisions link1="arm_1_shoulder_link" link2="arm_2_wrist_link" reason="Never"/>
+    <disable_collisions link1="arm_1_wrist_link" link2="arm_2_base_link" reason="Never"/>
+    <disable_collisions link1="arm_1_wrist_link" link2="arm_2_shoulder_link" reason="Never"/>
+    <disable_collisions link1="arm_2_arm_link" link2="arm_2_base_link" reason="Never"/>
+    <disable_collisions link1="arm_2_arm_link" link2="arm_2_elbow_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_2_arm_link" link2="arm_2_hand_link" reason="Never"/>
+    <disable_collisions link1="arm_2_arm_link" link2="arm_2_shoulder_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_2_base_link" link2="arm_2_elbow_link" reason="Never"/>
+    <disable_collisions link1="arm_2_base_link" link2="arm_2_shoulder_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_2_elbow_link" link2="arm_2_forearm_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_2_elbow_link" link2="arm_2_hand_link" reason="Never"/>
+    <disable_collisions link1="arm_2_elbow_link" link2="arm_2_shoulder_link" reason="Never"/>
+    <disable_collisions link1="arm_2_elbow_link" link2="arm_2_wrist_link" reason="Never"/>
+    <disable_collisions link1="arm_2_forearm_link" link2="arm_2_hand_link" reason="Never"/>
+    <disable_collisions link1="arm_2_forearm_link" link2="arm_2_wrist_link" reason="Adjacent"/>
+    <disable_collisions link1="arm_2_hand_link" link2="arm_2_wrist_link" reason="Adjacent"/>
+</robot>
