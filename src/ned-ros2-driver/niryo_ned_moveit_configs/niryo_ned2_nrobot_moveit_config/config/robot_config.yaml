@@ -1,0 +1,43 @@
+# Robot configuration - source of truth for N-robot MoveIt system
+# Edit this file to add/remove/reposition robots
+# After editing, run: python3 scripts/generate_all.py
+
+robots:
+  # Robot 1: positioned at 180° (pointing backward on +X axis)
+  - name: arm_1
+    angle_deg: 180.0
+    distance_m: 0.35
+
+  # Robot 2: positioned at 0° (pointing forward on -X axis)
+  - name: arm_2
+    angle_deg: 0.0
+    distance_m: 0.35
+
+  # Robot 3: positioned at 120° (120° from arm_2)
+  - name: arm_3
+    angle_deg: 120.0
+    distance_m: 0.35
+
+# Named groups for coordinated motion planning
+groups:
+  all: [arm_1, arm_2, arm_3]
+  arm_1_only: [arm_1]
+  arm_2_only: [arm_2]
+  arm_3_only: [arm_3]
+  arms_1_2: [arm_1, arm_2]
+  arms_2_3: [arm_2, arm_3]
+  arms_1_3: [arm_1, arm_3]
+
+# Default home pose applied to all robots
+# (individual robots will use arm_X_joint_Y naming)
+default_home_pose:
+  joint_1: 0.0
+  joint_2: 0.2862
+  joint_3: 0.0
+  joint_4: 0.0
+  joint_5: -1.5166
+  joint_6: 0.0
+
+# Planning parameters
+planning:
+  enable_collision_checking: true

@@ -1,0 +1,18 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: niryo_ned2_nrobot_moveit_config
+    relative_path: config/niryo_ned2_nrobot.urdf.xacro
+  srdf:
+    relative_path: config/niryo_ned2_nrobot.srdf
+  package_settings:
+    author_name: N-Robot Configuration
+    author_email: todo@example.com
+    generated_timestamp: 0
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+  modified_urdf:
+    xacros:
+      - control_xacro

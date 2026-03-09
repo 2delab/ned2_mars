@@ -1,0 +1,46 @@
+
+# DO NOT EDIT MANUALLY - regenerate with generate_all.py
+
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+
+moveit_simple_controller_manager:
+  controller_names:
+    - arm_1
+    - arm_2
+    - arm_3
+
+  arm_1:
+    type: FollowJointTrajectory
+    joints:
+      - arm_1_joint_1
+      - arm_1_joint_2
+      - arm_1_joint_3
+      - arm_1_joint_4
+      - arm_1_joint_5
+      - arm_1_joint_6
+    action_ns: follow_joint_trajectory_prefixed
+    default: true
+
+  arm_2:
+    type: FollowJointTrajectory
+    joints:
+      - arm_2_joint_1
+      - arm_2_joint_2
+      - arm_2_joint_3
+      - arm_2_joint_4
+      - arm_2_joint_5
+      - arm_2_joint_6
+    action_ns: follow_joint_trajectory_prefixed
+    default: true
+
+  arm_3:
+    type: FollowJointTrajectory
+    joints:
+      - arm_3_joint_1
+      - arm_3_joint_2
+      - arm_3_joint_3
+      - arm_3_joint_4
+      - arm_3_joint_5
+      - arm_3_joint_6
+    action_ns: follow_joint_trajectory_prefixed
+    default: true

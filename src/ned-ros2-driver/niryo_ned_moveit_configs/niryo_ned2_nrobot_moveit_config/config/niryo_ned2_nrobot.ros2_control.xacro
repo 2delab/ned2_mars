@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!--
+    ROS2 Control configuration for N-robot system
+    DO NOT EDIT MANUALLY - regenerate with scripts/generate_all.py
+    -->
+
+    <!-- Macro for ROS2 control fake system -->
+    <xacro:macro name="niryo_ned2_nrobot_ros2_control" params="name initial_positions_file">
+        <ros2_control name="${name}" type="system">
+            <!-- Fake hardware system for testing/simulation -->
+            <hardware>
+                <plugin>mock_components/GenericSystem</plugin>
+                <param name="fake_sensor_commands">true</param>
+            </hardware>
+
+            <!-- Joint interfaces for all robots -->
+            <!-- arm_1: 6 joint interfaces -->
+            <joint name="arm_1_joint_1">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_1_joint_2">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_1_joint_3">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_1_joint_4">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_1_joint_5">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_1_joint_6">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+
+            <!-- arm_2: 6 joint interfaces -->
+            <joint name="arm_2_joint_1">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_2_joint_2">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_2_joint_3">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_2_joint_4">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_2_joint_5">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_2_joint_6">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+
+            <!-- arm_3: 6 joint interfaces -->
+            <joint name="arm_3_joint_1">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_3_joint_2">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_3_joint_3">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_3_joint_4">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_3_joint_5">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+            <joint name="arm_3_joint_6">
+                <command_interface name="position"/>
+                <state_interface name="position">
+                    <param name="initial_value">0.0</param>
+                </state_interface>
+            </joint>
+
+        </ros2_control>
+    </xacro:macro>
+
+</robot>

@@ -1,0 +1,128 @@
+
+# DO NOT EDIT MANUALLY - regenerate with generate_all.py
+
+arm_1_joint_1:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_1_joint_2:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_1_joint_3:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_1_joint_4:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_1_joint_5:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_1_joint_6:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_2_joint_1:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_2_joint_2:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_2_joint_3:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_2_joint_4:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_2_joint_5:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_2_joint_6:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_3_joint_1:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_3_joint_2:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_3_joint_3:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_3_joint_4:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_3_joint_5:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
+
+arm_3_joint_6:
+  has_velocity_limits: true
+  max_velocity: 10.0
+  has_acceleration_limits: true
+  max_acceleration: 50.0
+  has_jerk_limits: false
