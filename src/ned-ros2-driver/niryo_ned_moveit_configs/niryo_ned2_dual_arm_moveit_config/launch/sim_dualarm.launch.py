@@ -71,6 +71,30 @@ def generate_launch_description():
         output="screen",
     )
 
+    arm_2_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "arm_2",
+            "--remap",
+            "/arm_2/follow_joint_trajectory:=/arm_2_controller/follow_joint_trajectory",
+        ],
+        output="screen",
+    )
+
+    arm_2_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["arm_2"],
+        output="screen",
+        remappings=[
+            (
+                "/arm_2/follow_joint_trajectory",
+                "/arm_2_controller/follow_joint_trajectory",
+            ),
+        ],
+    )
+
     # MoveIt move_group node
     move_group_node = Node(
         package="moveit_ros_move_group",

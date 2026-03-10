@@ -21,7 +21,7 @@ import threading
 import time
 
 from sensor_msgs.msg import JointState
-from .trajectory_utils import get_arm_id_from_joint_name
+from src.trajectory_utils import get_arm_id_from_joint_name
 
 
 class SafetyState(Enum):

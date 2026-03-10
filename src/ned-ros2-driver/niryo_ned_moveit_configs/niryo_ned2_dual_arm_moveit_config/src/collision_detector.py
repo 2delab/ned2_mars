@@ -16,11 +16,12 @@ Paper Component #2: Collision Detection
 from typing import List, Tuple, Optional
 import threading
 import time
+import bisect
 
 from trajectory_msgs.msg import JointTrajectory
 from sensor_msgs.msg import JointState
 
-from .trajectory_utils import discretize_trajectory, get_robot_state_at_time
+from src.trajectory_utils import discretize_trajectory, get_robot_state_at_time
 
 
 class CollisionDetector:
@@ -111,25 +112,36 @@ class CollisionDetector:
             max_time_b = discrete_b[-1][0] if discrete_b else 0.0
             max_time = min(max_time_a, max_time_b)
 
-            # Check collision at each timestep
+            # Build sorted time index for trajectory_b for O(log n) binary search
+            times_b = [t for t, _, _ in discrete_b]
+            positions_b_by_time = {t: (names, pos) for t, names, pos in discrete_b}
+
+            # Check collision at each timestep of trajectory_a
             for time_step in range(len(discrete_a)):
                 time = discrete_a[time_step][0]
 
                 if time > max_time:
                     break
 
-                # Get states at this time
+                # Get states at this time for trajectory_a
                 _, positions_a = discrete_a[time_step][1], discrete_a[time_step][2]
 
-                # Find corresponding state in trajectory_b
+                # Find corresponding state in trajectory_b using binary search O(log n)
                 positions_b = None
-                for t, names, pos in discrete_b:
-                    if abs(t - time) < self.timestep / 2:
-                        positions_b = pos
-                        break
+
+                # Use bisect to find nearest time point in trajectory_b
+                idx = bisect.bisect_left(times_b, time)
+
+                # Check both the found index and adjacent indices for closest match
+                for check_idx in [idx - 1, idx]:
+                    if 0 <= check_idx < len(times_b):
+                        t_candidate = times_b[check_idx]
+                        if abs(t_candidate - time) < self.timestep / 2:
+                            names_b, positions_b = positions_b_by_time[t_candidate]
+                            break
 
                 if positions_b is None:
-                    # Use interpolation if exact timestep not found
+                    # Use interpolation if no close point found within tolerance
                     _, positions_b = get_robot_state_at_time(trajectory_b, time)
 
                 # Check collision at this timestep
@@ -254,8 +266,8 @@ class CollisionDetector:
         """
         Simple geometric bounds collision check (fallback).
 
-        This is a conservative check that looks at joint angles.
-        Real implementation should use end-effector positions and geometries.
+        For dual-arm systems like Niryo Ned2, check if arms are in close proximity
+        by examining configuration space distance.
 
         Args:
             positions_a: Joint positions for arm A
@@ -264,29 +276,37 @@ class CollisionDetector:
         Returns:
             True if potential collision detected
         """
-        # For Niryo Ned2: check if arm 1 and arm 2 are too close
-        # This is a simplified heuristic
-
-        # In a real implementation, you would:
-        # 1. Compute forward kinematics for both arms
-        # 2. Get end-effector positions
-        # 3. Check distance between end-effectors and links
-        # 4. Use proper geometric primitives
-
-        # For now, use a very conservative check:
-        # If both arms have similar joint angles for same joints, likely close
-
         if len(positions_a) < 3 or len(positions_b) < 3:
             return False
 
-        # Check if TCP to TCP distance is too close (very rough estimate)
-        # This is a placeholder - real implementation needs proper kinematics
+        # For Niryo Ned2 dual-arm: compute configuration space distance
+        # If arms have very similar joint angles, they're likely close/colliding
 
-        # For simulation, we don't actually need this because:
-        # 1. MoveIt already plans collision-free trajectories
-        # 2. We're doing this as extra safety checking
+        # Calculate normalized joint angle differences
+        # Niryo joints have ranges roughly [-π, π], normalize to [-1, 1]
+        config_distance = 0.0
+        for pos_a, pos_b in zip(positions_a, positions_b):
+            # Normalize angles to [-π, π] then to [-1, 1]
+            diff = abs(pos_a - pos_b)
+            # Handle circular distance (angle wrapping)
+            if diff > 3.14159:
+                diff = 6.28318 - diff
+            config_distance += (diff / 3.14159) ** 2
 
-        # Return False for now (simulation is safe by default)
+        config_distance = (config_distance / len(positions_a)) ** 0.5
+
+        # Collision threshold: if configuration distance < 0.3, arms are very close
+        # This is a heuristic tuned for Niryo Ned2 where arms come from opposite sides
+        # and joint ranges are similar
+        collision_threshold = 0.3
+
+        if config_distance < collision_threshold:
+            if self.logger:
+                self.logger.info(
+                    f"[CollisionDetector] Bounds check: config distance {config_distance:.3f} < {collision_threshold}"
+                )
+            return True
+
         return False
 
     def get_configuration_distance(

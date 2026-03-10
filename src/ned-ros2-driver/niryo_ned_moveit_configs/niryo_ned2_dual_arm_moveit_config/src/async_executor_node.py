@@ -34,10 +34,10 @@ from trajectory_msgs.msg import JointTrajectory
 from sensor_msgs.msg import JointState
 from std_msgs.msg import String, Float32, Bool
 
-from .scheduler import Scheduler
-from .collision_detector import CollisionDetector
-from .online_collision_monitor import OnlineCollisionMonitor, SafetyState
-from .trajectory_utils import (
+from src.scheduler import Scheduler, TrajectoryState
+from src.collision_detector import CollisionDetector
+from src.online_collision_monitor import OnlineCollisionMonitor, SafetyState
+from src.trajectory_utils import (
     split_trajectory_by_arm,
     trajectory_duration,
     convert_trajectory_msgs_to_niryo,
@@ -146,18 +146,20 @@ class AsyncExecutorNode(Node):
             callback_group=self.action_callback_group,
         )
 
-        # Action clients (send trajectories to controllers)
+        # Action clients (send trajectories to actual controllers at different namespace)
+        # MoveIt sends to /arm_1/follow_joint_trajectory (async executor)
+        # Async executor forwards to /arm_1_controller/follow_joint_trajectory (actual controller)
         self.arm_1_controller_client = ActionClient(
             self,
             FollowJointTrajectory,
-            "/arm_1/follow_joint_trajectory",
+            "/arm_1_controller/follow_joint_trajectory",
             callback_group=self.action_callback_group,
         )
 
         self.arm_2_controller_client = ActionClient(
             self,
             FollowJointTrajectory,
-            "/arm_2/follow_joint_trajectory",
+            "/arm_2_controller/follow_joint_trajectory",
             callback_group=self.action_callback_group,
         )
 
@@ -269,17 +271,14 @@ class AsyncExecutorNode(Node):
 
         arm_id, scheduled_traj = next_traj
 
-        # Skip if already executing
-        if scheduled_traj.state.value == "executing":
+        # Skip if already executing (state was set by controller acceptance callback)
+        if scheduled_traj.state == TrajectoryState.EXECUTING:
             return
 
-        # Mark as executing
-        scheduled_traj.start_time = time.time()
-        scheduled_traj.state.value = "executing"
-
-        self.get_logger().info(f"[{arm_id}] Starting execution")
+        self.get_logger().info(f"[{arm_id}] Sending to controller")
 
         # Send to controller
+        # Note: state is updated to EXECUTING only after controller accepts the goal
         self._send_trajectory_to_controller(arm_id, scheduled_traj)
 
     def _send_trajectory_to_controller(self, arm_id: str, scheduled_traj):
@@ -321,6 +320,13 @@ class AsyncExecutorNode(Node):
                     goal_handle.abort()
                     self.scheduler.on_trajectory_completion(arm_id)
                     return
+
+                # Controller accepted - now mark as executing
+                scheduled_traj.state = TrajectoryState.EXECUTING
+                scheduled_traj.start_time = time.time()
+                self.get_logger().info(
+                    f"[{arm_id}] Controller accepted, trajectory executing"
+                )
 
                 # Wait for result
                 result_future = goal_handle_controller.get_result_async()

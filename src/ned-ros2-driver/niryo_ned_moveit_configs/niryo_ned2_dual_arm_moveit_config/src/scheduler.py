@@ -20,7 +20,7 @@ import time
 from copy import deepcopy
 
 from trajectory_msgs.msg import JointTrajectory
-from .trajectory_utils import trajectory_duration, get_robot_state_at_time
+from src.trajectory_utils import trajectory_duration, get_robot_state_at_time
 
 
 class TrajectoryState(Enum):

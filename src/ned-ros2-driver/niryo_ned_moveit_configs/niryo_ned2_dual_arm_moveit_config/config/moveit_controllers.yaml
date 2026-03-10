@@ -1,13 +1,15 @@
 # MoveIt uses this configuration for controller management
-# Controllers route trajectories through joint_state_prefixer proxy servers
-# which translate prefixed joint names to unprefixed names for hardware
+# Controllers route trajectories through the async executor for collision checking
+# and asynchronous execution.
 #
 # Communication flow:
 #   MoveIt (prefixed names)
 #     ↓
-#   /arm_X/follow_joint_trajectory_prefixed (proxy server)
-#     ↓ (names stripped)
-#   /arm_X/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory (hardware)
+#   /arm_X/follow_joint_trajectory (async executor server)
+#     ↓ (collision check + scheduling)
+#   /arm_X_controller/follow_joint_trajectory (actual controller)
+#     ↓
+#   Joint trajectory execution
 
 moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
 
@@ -16,10 +18,10 @@ moveit_simple_controller_manager:
     - arm_1
     - arm_2
 
-  # Arm 1 controller routes through proxy that handles joint name translation
-  # Proxy server at: /arm_1/follow_joint_trajectory_prefixed
+  # Arm 1 controller routes through async executor
+  # Async executor server at: /arm_1/follow_joint_trajectory
   # Accepts: [arm_1_joint_1, arm_1_joint_2, ...]
-  # Forwards to hardware with: [joint_1, joint_2, ...]
+  # Async executor forwards to: /arm_1_controller/follow_joint_trajectory
   arm_1:
     type: FollowJointTrajectory
     joints:
@@ -32,10 +34,10 @@ moveit_simple_controller_manager:
     action_ns: follow_joint_trajectory
     default: true
 
-  # Arm 2 controller routes through proxy that handles joint name translation
-  # Proxy server at: /arm_2/follow_joint_trajectory_prefixed
+  # Arm 2 controller routes through async executor
+  # Async executor server at: /arm_2/follow_joint_trajectory
   # Accepts: [arm_2_joint_1, arm_2_joint_2, ...]
-  # Forwards to hardware with: [joint_1, joint_2, ...]
+  # Async executor forwards to: /arm_2_controller/follow_joint_trajectory
   arm_2:
     type: FollowJointTrajectory
     joints:

@@ -6,12 +6,27 @@ controller_manager:
     arm_1:
       type: joint_trajectory_controller/JointTrajectoryController
 
-
     arm_2:
       type: joint_trajectory_controller/JointTrajectoryController
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
+
+joint_state_broadcaster:
+  ros__parameters:
+    joints:
+      - arm_1_joint_1
+      - arm_1_joint_2
+      - arm_1_joint_3
+      - arm_1_joint_4
+      - arm_1_joint_5
+      - arm_1_joint_6
+      - arm_2_joint_1
+      - arm_2_joint_2
+      - arm_2_joint_3
+      - arm_2_joint_4
+      - arm_2_joint_5
+      - arm_2_joint_6
 
 arm_1:
   ros__parameters:
@@ -27,6 +42,9 @@ arm_1:
     state_interfaces:
       - position
     allow_nonzero_velocity_at_trajectory_end: true
+    # Use arm_1_controller namespace so async executor can forward to it
+    action_ns: arm_1_controller/follow_joint_trajectory
+    
 arm_2:
   ros__parameters:
     joints:
@@ -41,3 +59,5 @@ arm_2:
     state_interfaces:
       - position
     allow_nonzero_velocity_at_trajectory_end: true
+    # Use arm_2_controller namespace so async executor can forward to it
+    action_ns: arm_2_controller/follow_joint_trajectory
