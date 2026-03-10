@@ -16,7 +16,9 @@ def generate_launch_description():
     db_arg = DeclareLaunchArgument("db", default_value="false")
     use_rviz_arg = DeclareLaunchArgument("use_rviz", default_value="true")
     rviz_config_arg = DeclareLaunchArgument("rviz_config", default_value="moveit.rviz")
-    publish_frequency_arg = DeclareLaunchArgument("publish_frequency", default_value="15.0")
+    publish_frequency_arg = DeclareLaunchArgument(
+        "publish_frequency", default_value="15.0"
+    )
 
     # MoveIt configuration
     moveit_config = MoveItConfigsBuilder(
@@ -41,7 +43,9 @@ def generate_launch_description():
         output="screen",
         parameters=[
             moveit_config.robot_description,
-            os.path.join(str(moveit_config.package_path), "config", "ros2_controllers.yaml"),
+            os.path.join(
+                str(moveit_config.package_path), "config", "ros2_controllers.yaml"
+            ),
         ],
     )
 
@@ -85,6 +89,19 @@ def generate_launch_description():
         ],
     )
 
+    # Async Executor Node for asynchronous dual-arm trajectory execution
+    # This node implements the paper: "A Method for Multi-Robot Asynchronous Trajectory Execution in MoveIt2"
+    async_executor_node = Node(
+        package="niryo_ned2_dual_arm_moveit_config",
+        executable="async_executor_node.py",
+        output="screen",
+        parameters=[
+            os.path.join(
+                str(moveit_config.package_path), "config", "async_executor.yaml"
+            ),
+        ],
+    )
+
     # RViz
     rviz_node = Node(
         package="rviz2",
@@ -92,11 +109,13 @@ def generate_launch_description():
         output="log",
         arguments=[
             "-d",
-            PathJoinSubstitution([
-                FindPackageShare("niryo_ned2_dual_arm_moveit_config"),
-                "config",
-                LaunchConfiguration("rviz_config"),
-            ]),
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("niryo_ned2_dual_arm_moveit_config"),
+                    "config",
+                    LaunchConfiguration("rviz_config"),
+                ]
+            ),
         ],
         parameters=[
             moveit_config.planning_pipelines,
@@ -109,26 +128,31 @@ def generate_launch_description():
     # Warehouse database (optional)
     warehouse_db_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([
-                FindPackageShare("niryo_ned2_dual_arm_moveit_config"),
-                "launch",
-                "warehouse_db.launch.py",
-            ])
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("niryo_ned2_dual_arm_moveit_config"),
+                    "launch",
+                    "warehouse_db.launch.py",
+                ]
+            )
         ),
         condition=IfCondition(LaunchConfiguration("db")),
     )
 
-    return LaunchDescription([
-        db_arg,
-        use_rviz_arg,
-        rviz_config_arg,
-        publish_frequency_arg,
-        robot_state_publisher_node,
-        ros2_control_node,
-        joint_state_broadcaster_spawner,
-        arm_1_controller_spawner,
-        arm_2_controller_spawner,
-        move_group_node,
-        rviz_node,
-        warehouse_db_launch,
-    ])
+    return LaunchDescription(
+        [
+            db_arg,
+            use_rviz_arg,
+            rviz_config_arg,
+            publish_frequency_arg,
+            robot_state_publisher_node,
+            ros2_control_node,
+            joint_state_broadcaster_spawner,
+            arm_1_controller_spawner,
+            arm_2_controller_spawner,
+            move_group_node,
+            async_executor_node,  # Add async executor for asynchronous trajectory execution
+            rviz_node,
+            warehouse_db_launch,
+        ]
+    )

@@ -1,0 +1,26 @@
+# Asynchronous Trajectory Executor Configuration
+#
+# Parameters for the async executor node handling dual-arm trajectory execution
+
+async_executor_node:
+  ros__parameters:
+    # Maximum time a trajectory can stay in backlog queue before timeout (seconds)
+    # If exceeded, the trajectory is aborted and user must re-plan
+    # Lower values: faster failure detection, but less tolerance for long tasks
+    # Higher values: more patient, but user unsure if stuck
+    # Recommended: 5.0 seconds for interactive use, 10-30s for factory tasks
+    backlog_timeout: 5.0
+    
+    # Timestep for collision detection discretization (seconds)
+    # Smaller values: safer (detects collisions between steps), but slower
+    # Larger values: faster, but might miss collisions
+    # Recommended: 0.02s (50ms) for simulation, 0.01s for real hardware
+    # Paper uses: variable, 0.05s mentioned as example
+    collision_timestep: 0.02
+    
+    # Online collision monitoring check frequency (Hz)
+    # Frequency of real-time collision checks during execution
+    # Higher values: more frequent checks, better safety, higher CPU load
+    # Lower values: less CPU load, but slower to detect collisions
+    # Recommended: 20-50 Hz for good balance
+    monitoring_frequency: 20.0
