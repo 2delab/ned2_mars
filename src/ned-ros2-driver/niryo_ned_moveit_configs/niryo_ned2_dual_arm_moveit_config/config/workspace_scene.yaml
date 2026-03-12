@@ -1,0 +1,15 @@
+# Workspace planning scene for Niryo Ned2 Dual-Arm mock configuration
+# 3x3 meter workspace platform at origin (0, 0, 0)
+# This is a static collision object that represents the workspace floor/platform
+
+collision_objects:
+  - id: "workspace_platform"
+    header:
+      frame_id: "world"
+    primitives:
+      - type: 1  # BOX primitive type
+        dimensions: [3.0, 3.0, 0.0]  # [length_x, length_y, length_z] in meters (flush with origin)
+    primitive_poses:
+      - position: {x: 0.0, y: 0.0, z: 0.0}
+        orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}  # Identity quaternion (no rotation)
+    operation: 0  # ADD operation
