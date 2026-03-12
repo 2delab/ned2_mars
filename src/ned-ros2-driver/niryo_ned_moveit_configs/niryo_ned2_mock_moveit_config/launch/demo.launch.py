@@ -13,6 +13,9 @@ def generate_launch_description():
     - MoveIt move_group (planning and execution)
     - RViz with interactive motion planning markers
 
+    Note: The demo.launch.py uses default CHOMP planner. For OMPL planner with
+    automatic trajectory timing, use test2.py which explicitly requests OMPL.
+
     Usage: ros2 launch niryo_ned2_mock_moveit_config demo.launch.py
     """
     moveit_config = MoveItConfigsBuilder(

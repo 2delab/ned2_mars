@@ -6,7 +6,7 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    niryo_robot_follow_joint_trajectory_controller:
+    arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
 joint_state_broadcaster:
@@ -14,7 +14,7 @@ joint_state_broadcaster:
     interfaces:
       - position
 
-niryo_robot_follow_joint_trajectory_controller:
+arm_controller:
   ros__parameters:
     joints:
       - joint_1
