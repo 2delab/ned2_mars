@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-ArUco Marker Detection and Pose Publishing Node with Camera Integration
+All ArUco Markers Publisher Node
 
-Captures video from camera, detects ArUco markers and publishes their poses as TF transforms.
+Captures video from camera, detects ALL ArUco markers and publishes their poses as TF transforms.
+Unlike arucodetection.py, this publishes all detected markers without marker 40 requirement.
 """
 
 import cv2
@@ -20,11 +21,11 @@ import threading
 import time
 
 
-class ArucoPosePublisher(Node):
-    """Node for capturing camera feed, detecting ArUco markers and publishing their poses."""
+class AllMarkersPublisher(Node):
+    """Node for capturing camera feed, detecting ALL ArUco markers and publishing their poses."""
 
     def __init__(self):
-        super().__init__("aruco_pose_publisher")
+        super().__init__("all_markers_publisher")
 
         # Load calibration data
         self._load_calibration()
@@ -65,16 +66,12 @@ class ArucoPosePublisher(Node):
         # Image publisher (optional)
         if self.publish_image:
             self.image_publisher = self.create_publisher(
-                Image, "/aruco/image_marked", qos_profile=QoSProfile(depth=1)
+                Image, "/markers/image_marked", qos_profile=QoSProfile(depth=1)
             )
 
         # Control flags
         self.running = True
         self.processing_lock = threading.Lock()
-
-        # Marker reference tracking
-        self.marker_40_reference = None  # Current frame reference for marker ID 40
-        self.last_known_reference_40 = None  # Last known reference if 40 not detected
 
         # Create timer for camera capture at specified rate
         self.frame_count = 0
@@ -84,7 +81,7 @@ class ArucoPosePublisher(Node):
         self.timer = self.create_timer(timer_period, self.camera_timer_callback)
 
         self.get_logger().info(
-            f"ArucoPosePublisher initialized. "
+            f"AllMarkersPublisher initialized. "
             f"Camera: {self.camera_id}, FPS: {self.camera_fps}, "
             f"Marker size: {self.marker_size}m"
         )
@@ -234,7 +231,7 @@ class ArucoPosePublisher(Node):
         self, frame: np.ndarray, ros_msg: Image, corners: list, ids: np.ndarray
     ) -> None:
         """
-        Process detected ArUco markers and publish transforms relative to marker ID 40 reference.
+        Process detected ArUco markers and publish transforms relative to camera frame.
 
         Args:
             frame: OpenCV image frame
@@ -248,18 +245,13 @@ class ArucoPosePublisher(Node):
                 corners, self.marker_size, self.camera_matrix, self.dist_coeffs
             )
 
-            # First pass: find and update reference marker (ID 40)
-            for i, marker_id in enumerate(ids.flatten()):
-                if marker_id == 40:
-                    self.marker_40_reference = tvecs[i][0].copy()
-                    self.last_known_reference_40 = self.marker_40_reference.copy()
-                    self.get_logger().debug(
-                        f"[{self.camera_frame_id}] Updated reference marker 40 at: "
-                        f"({self.marker_40_reference[0]:.3f}, {self.marker_40_reference[1]:.3f}, {self.marker_40_reference[2]:.3f})"
-                    )
-                    break
+            # Log detected marker IDs
+            detected_ids = [int(mid) for mid in ids.flatten()]
+            self.get_logger().info(
+                f"[{self.camera_frame_id}] Detected markers: {detected_ids}"
+            )
 
-            # Second pass: publish all markers relative to reference
+            # Process all detected markers
             for i, marker_id in enumerate(ids.flatten()):
                 rvec = rvecs[i][0]
                 tvec = tvecs[i][0]
@@ -267,7 +259,7 @@ class ArucoPosePublisher(Node):
                 # Calculate distance
                 distance = np.linalg.norm(tvec)
 
-                # Publish TF transform (relative to reference)
+                # Publish TF transform relative to camera frame
                 self._publish_transform(ros_msg, marker_id, rvec, tvec)
 
                 # Draw visualization
@@ -282,7 +274,7 @@ class ArucoPosePublisher(Node):
         self, ros_msg: Image, marker_id: int, rvec: np.ndarray, tvec: np.ndarray
     ) -> None:
         """
-        Publish marker pose as TF transform relative to marker ID 40 reference frame.
+        Publish marker pose as TF transform relative to camera frame.
 
         Args:
             ros_msg: ROS Image message (for timestamp)
@@ -290,37 +282,25 @@ class ArucoPosePublisher(Node):
             rvec: Rotation vector
             tvec: Translation vector
         """
-        # Only use current reference (not last known) - stop publishing if 40 not detected
-        if self.marker_40_reference is None:
-            self.get_logger().debug(
-                f"[{self.camera_frame_id}] Cannot publish marker {marker_id}: "
-                f"Reference marker 40 not yet detected this frame"
-            )
-            return
+        # Convert rotation vector to quaternion
+        quat = self._rvec_to_quat(rvec)
 
-        # Skip publishing marker 40 itself - it's handled by static TF at world (0, 0, 0)
-        if marker_id == 40:
-            return
-
-        # Calculate offset from reference marker 40
-        offset_tvec = tvec - self.marker_40_reference
-
-        # Create transform relative to aruco_marker_40 frame
+        # Create transform relative to camera frame
         transform = TransformStamped()
         transform.header.stamp = self.get_clock().now().to_msg()
-        transform.header.frame_id = "aruco_marker_40"
+        transform.header.frame_id = self.camera_frame_id
         transform.child_frame_id = f"aruco_marker_{int(marker_id)}"
 
-        # Set translation as offset from marker 40 (Z fixed to 0)
-        transform.transform.translation.x = float(offset_tvec[0])
-        transform.transform.translation.y = float(offset_tvec[1])
-        transform.transform.translation.z = 0.0
+        # Set translation
+        transform.transform.translation.x = float(tvec[0])
+        transform.transform.translation.y = float(tvec[1])
+        transform.transform.translation.z = float(tvec[2])
 
-        # Use identity rotation (markers are flat on ground)
-        transform.transform.rotation.x = 0.0
-        transform.transform.rotation.y = 0.0
-        transform.transform.rotation.z = 0.0
-        transform.transform.rotation.w = 1.0
+        # Set rotation from quaternion
+        transform.transform.rotation.x = float(quat[0])
+        transform.transform.rotation.y = float(quat[1])
+        transform.transform.rotation.z = float(quat[2])
+        transform.transform.rotation.w = float(quat[3])
 
         self.tf_broadcaster.sendTransform(transform)
 
@@ -400,7 +380,7 @@ class ArucoPosePublisher(Node):
         Args:
             frame: OpenCV image frame
         """
-        cv2.imshow("ArUco Detection", frame)
+        cv2.imshow("All Markers Detection", frame)
         key = cv2.waitKey(1) & 0xFF
 
         if key == ord("q"):
@@ -443,7 +423,7 @@ class ArucoPosePublisher(Node):
 def main(args=None):
     """Main entry point."""
     rclpy.init(args=args)
-    node = ArucoPosePublisher()
+    node = AllMarkersPublisher()
 
     try:
         rclpy.spin(node)

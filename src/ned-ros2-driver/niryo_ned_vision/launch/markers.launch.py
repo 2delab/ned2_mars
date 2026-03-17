@@ -3,13 +3,13 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    """Launch file for vision system with ArUco detection and camera transforms."""
+    """Launch file for all ArUco markers detection and publishing as TF transforms."""
 
-    # ArUco detection node for first camera (camera_id=0)
-    aruco_detection_node = Node(
+    # All markers publisher node for first camera (camera_id=0)
+    markers_publisher_node = Node(
         package="niryo_ned_vision",
-        executable="arucodetection",
-        name="aruco_detection",
+        executable="marker_publisher",
+        name="markers_publisher",
         output="both",
         parameters=[
             {"camera_id": 0},
@@ -18,11 +18,11 @@ def generate_launch_description():
         ],
     )
 
-    # ArUco detection node for second camera (camera_id=4)
-    aruco_detection_node2 = Node(
+    # All markers publisher node for second camera (camera_id=4)
+    markers_publisher_node2 = Node(
         package="niryo_ned_vision",
-        executable="arucodetection",
-        name="aruco_detection2",
+        executable="marker_publisher",
+        name="markers_publisher2",
         output="both",
         parameters=[
             {"camera_id": 4},
@@ -48,27 +48,6 @@ def generate_launch_description():
         name="camera1_tf_broadcaster",
         output="both",
     )
-
-    """
-        # Static transform publisher for D435 camera
-    d435_camera_tf_broadcaster = Node(
-        package="tf2_ros",
-        executable="static_transform_publisher",
-        arguments=[
-            "0.0385",
-            "0",
-            "0",
-            "0",
-            "0",
-            "1.7453",
-            "arm_1_wrist_link",
-            "d435_camera",
-        ],
-        name="d435_camera_tf_broadcaster",
-        output="both",
-    )
-
-    """
 
     # Static transform publisher for mono camera
     camera2_tf_broadcaster = Node(
@@ -108,8 +87,8 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            aruco_detection_node,
-            aruco_detection_node2,
+            markers_publisher_node,
+            markers_publisher_node2,
             camera1_tf_broadcaster,
             camera2_tf_broadcaster,
             aruco_marker_tf_broadcaster,

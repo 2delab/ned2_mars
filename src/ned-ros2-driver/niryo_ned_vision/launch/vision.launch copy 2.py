@@ -14,7 +14,6 @@ def generate_launch_description():
         parameters=[
             {"camera_id": 0},
             {"camera_frame_id": "camera_1"},
-            {"enable_visualization": False},
         ],
     )
 
@@ -27,7 +26,6 @@ def generate_launch_description():
         parameters=[
             {"camera_id": 4},
             {"camera_frame_id": "camera_2"},
-            {"enable_visualization": False},
         ],
     )
 

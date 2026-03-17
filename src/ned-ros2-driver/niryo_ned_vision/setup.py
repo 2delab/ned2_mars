@@ -14,7 +14,7 @@ setup(
         ("share/" + package_name, ["package.xml"]),
         (
             "share/" + package_name + "/launch",
-            ["launch/vision.launch.py"],
+            ["launch/vision.launch.py", "launch/markers.launch.py"],
         ),
     ],
     include_package_data=True,
@@ -35,6 +35,7 @@ setup(
             "d435_arucodetection=niryo_ned_vision.d435_arucodetection:main",
             "stereo_calibration=niryo_ned_vision.stereo_distance_calibrator:main",
             "dual_camera_calibration=niryo_ned_vision.dual_camera_calibration:main",
+            "marker_publisher=niryo_ned_vision.marker_publisher:main",
         ],
     },
 )
